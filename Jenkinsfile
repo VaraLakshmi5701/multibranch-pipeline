@@ -1,16 +1,24 @@
 pipeline {
-    agent any
-    stages {
-        stage ("Build") {
-            steps {
-                sh 'docker build -t shaikmustafa/abinay:bus .'
-            }
-        }
-        
-        stage ("Deploy") {
-            steps {
-                sh 'docker run -itd --name bus -p 8888:80 shaikmustafa/abinay:bus'
-            }
-        }
+agent any
+  stages {
+    stage('Build')
+    {
+      steps{
+        sh 'docker build -t varalakshmi5701/repo:bus .'
+      }
     }
+     stage('Registry') {
+            steps {
+               withDockerRegistry(credentialsId: 'docker-registry', url: 'https://hub.docker.com/repositories/varalakshmi5701') {
+                       sh 'docker push varalakshmi5701/repo:bus'
+                 }
+            }
+        }
+    stage('Deploy')
+    {
+       steps {
+         sh 'docker run -itd --name cont1 -p 1111:80 varalakshmi5701/repo:bus'
+       }
+    }
+  }
 }
